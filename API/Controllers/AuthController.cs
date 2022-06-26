@@ -26,7 +26,7 @@ namespace ChatApplication.API.Controllers
         {
             var result = this._userAppService.Authenticate(login);
             if (!result.IsAuthenticated)
-                return NotFound("Username or password is invalid");
+                return NotFound(result);
 
             return result;
         }
