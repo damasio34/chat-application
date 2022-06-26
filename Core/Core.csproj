@@ -13,6 +13,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Domain\BrockerConnectionSettings.cs" />
+    <Compile Remove="Domain\Services\IBrockerReceiverService.cs" />
+    <Compile Remove="Services\BrockerReceiverServiceBrockerReceiverMessage.cs" />
+    <Compile Remove="Services\BrockerSenderService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
     <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.20.0" />

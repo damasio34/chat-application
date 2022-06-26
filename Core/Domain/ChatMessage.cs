@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ChatApplication.Core.Domain
 {
-    public class Message
+    public class ChatMessage
     {
         public string Id { get; set; }
         [Required]
@@ -12,6 +12,9 @@ namespace ChatApplication.Core.Domain
         public string Text { get; set; }
         [Required]
         public string Room { get; set; }
+        [Required]
+        public string ConnectionId { get; set; }
+        public MessageCode MessageCode { get; set; }
         public DateTime? When { get; set; }
     }
 }

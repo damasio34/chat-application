@@ -1,47 +1,47 @@
-﻿using ChatApplication.StockBot;
+﻿using ChatApplication.Core.Domain;
+using ChatApplication.Core.Services;
+using ChatApplication.StockBot.Services;
+using RabbitMQ.Client.Events;
 using System;
-using System.IO;
-using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace StockBot
 {
     class Program
-    {
-        private static readonly HttpClient client = new HttpClient();
+    {        
         static async Task Main(string[] args)
         {
-            var receiveService = new ReceiveService();
-            var sendService = new SendService();
-
-            receiveService.ReceiveMessage(async (model, ea) =>
-            {
-                var stockQuoteService = new StockQuoteService();
-                var body = ea.Body.ToArray();
-                var stockCode = Encoding.UTF8.GetString(body);
-                //var stockCode = "aapl.us";
-                var stockStream = await GetStockQuoteAsync(stockCode);
-                var stockQuote = stockQuoteService.GetQuoteFromCSV(stockStream);
-
-                Console.WriteLine(stockQuote.Code);
-                Console.WriteLine(stockQuote.Quote);
-
-                sendService.SendMessage(stockQuote.Quote.ToString());
-            });
-
-            //var stockCode = "aapl.us";
-            //var stockStream = await GetStockQuoteAsync(stockCode);
-            //var stockQuote = stockQuoteService.GetQuoteFromCSV(stockStream);
-
-            //Console.WriteLine(stockQuote.Code);
-            //Console.WriteLine(stockQuote.Quote);
-            Console.ReadKey();
+            var brockerService = new BrockerService();
+            var cancelationToken = new CancellationToken();
+            await brockerService.ReceiveMessage(cancelationToken, ProcessMessage(brockerService), "api-to-bot");
         }
-        private static Task<Stream> GetStockQuoteAsync(string stockCode)
+
+        private static EventHandler<BasicDeliverEventArgs> ProcessMessage(BrockerService brockerService)
         {
-            var streamTask = client.GetStreamAsync($"https://stooq.com/q/l/?s={stockCode}&f=sd2t2ohlcv&h&e=csv");
-            return streamTask;
+            return async (model, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                var message = Encoding.UTF8.GetString(body);
+                var receivedMessage = JsonSerializer.Deserialize<ChatMessage>(message);
+                var stockStream = await StockQuoteService.GetStockQuoteAsync(receivedMessage.MessageCode.Value);
+                var stockQuote = StockQuoteService.GetQuoteFromCSV(stockStream);
+                var chatMessage = new ChatMessage
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Text = $"{receivedMessage.MessageCode.Value.ToUpper()} quote is ${stockQuote.Quote} per share",
+                    Username = "StockBot",
+                    When = DateTime.UtcNow,
+                    MessageCode = receivedMessage.MessageCode,
+                    ConnectionId = receivedMessage.ConnectionId
+                };
+
+                Console.WriteLine(chatMessage.Text);
+
+                brockerService.SendMessage<ChatMessage>(chatMessage, "bot-to-api");
+            };
         }
     }
 }

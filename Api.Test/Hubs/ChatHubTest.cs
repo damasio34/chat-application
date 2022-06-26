@@ -45,16 +45,16 @@ namespace ChatApplication.Api.Test.Hubs
 			};
 			var semaphore = new Semaphore(initialCount: 0, maximumCount: 1, name: "WaitReceiveMessage");
 			var connection = await StartConnectionAsync(server.CreateHandler(), "chat");
-			var message = default(Message);
+			var message = default(ChatMessage);
 
 			// Act
 			await connection.InvokeAsync("AddToRoom", "testRoom");
-			connection.On<Message>("receiveMessage", (chatMessage) =>
+			connection.On<ChatMessage>("receiveMessage", (chatMessage) =>
 			{
 				message = chatMessage;
 				semaphore.Release();
 			});
-			await connection.InvokeAsync("SendMessageToRoom", new Message 
+			await connection.InvokeAsync("SendMessageToRoom", new ChatMessage 
 			{
 				Username = "batman",
 				Text = "Hello World!!",
@@ -82,16 +82,16 @@ namespace ChatApplication.Api.Test.Hubs
 			};
 			var semaphore = new Semaphore(initialCount: 0, maximumCount: 1, name: "WaitReceiveMessage");
 			var connection = await StartConnectionAsync(server.CreateHandler(), "chat");
-			var message = default(Message);
+			var message = default(ChatMessage);
 
 			// Act
 			await connection.InvokeAsync("AddToRoom", "testCommandRoom");
-			connection.On<Message>("receiveMessage", (chatMessage) =>
+			connection.On<ChatMessage>("receiveMessage", (chatMessage) =>
 			{
 				message = chatMessage;
 				semaphore.Release();
 			});
-			await connection.InvokeAsync("SendMessageToRoom", new Message
+			await connection.InvokeAsync("SendMessageToRoom", new ChatMessage
 			{
 				Username = "robin",
 				Text = "/stock=AAPL.US",

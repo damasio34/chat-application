@@ -1,9 +1,9 @@
 ﻿using CsvHelper.Configuration.Attributes;
 using System;
 
-namespace ChatApplication.StockBot
+namespace ChatApplication.StockBot.Domain
 {
-    public class StockQuoteDTO
+    public class StockQuote
     {
         [Name("Close")]
         public decimal Quote { get; set; }

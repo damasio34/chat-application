@@ -1,4 +1,5 @@
 ﻿using ChatApplication.Core.Domain;
+using ChatApplication.Core.Domain.Services;
 using ChatApplication.Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -11,26 +12,39 @@ namespace ChatApplication.API.Hubs
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ChatHub : Hub
     {
+        private readonly IBrockerService _brockerService;
+
+        public ChatHub(IBrockerService brockerService)
+        {
+            this._brockerService = brockerService;
+        }
+
         public Task AddToRoom(string roomName)
         {
             return Groups.AddToGroupAsync(Context.ConnectionId, roomName);
         }
 
-        public Task SendMessageToRoom(Message message)
+        public Task SendMessageToRoom(ChatMessage chatMessage)
         {
-            message.Id = Guid.NewGuid().ToString();
-            message.When = DateTime.UtcNow;
+            chatMessage.Id = Guid.NewGuid().ToString();
+            chatMessage.When = DateTime.UtcNow;
+            chatMessage.ConnectionId = Context.ConnectionId;
 
-            if (message.Text.StartsWith("/stock="))
+            const string stockCode = "/stock=";
+
+            if (chatMessage.Text.StartsWith(stockCode))
             {
-                var stockCode = message.Text.Substring(7, message.Text.Length - 7);
-                var brockerSenderService = new BrockerSenderService();
-                brockerSenderService.SendMessage(stockCode);
+                chatMessage.MessageCode = new MessageCode 
+                {
+                    Code = stockCode,
+                    Value = chatMessage.Text.Substring(7, chatMessage.Text.Length - 7)
+                };
+                this._brockerService.SendMessage(chatMessage, "api-to-bot");
 
-                return Groups.AddToGroupAsync(Context.ConnectionId, stockCode);
+                return Groups.AddToGroupAsync(Context.ConnectionId, chatMessage.ConnectionId);
             }
 
-            return Clients.Groups(message.Room)?.SendAsync("receiveMessage", message);
+            return Clients.Groups(chatMessage.Room)?.SendAsync("receiveMessage", chatMessage);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using ChatApplication.Core.Domain.DTOs;
 using ChatApplication.Core.Domain.Repositories;
 using ChatApplication.Core.Domain.Services;
-using System;
 
 namespace ChatApplication.Core.Services
 {

@@ -11,10 +11,10 @@ namespace ChatApplication.API.Extensions
     {
         public static IServiceCollection AddIoC(this IServiceCollection services)
         {
-            services.AddHostedService<BrockerReiceverScopedServiceHostedService>();
+            services.AddHostedService<BrockerScopedHostedService>();
 
             return services
-                .AddSingleton<IBrockerReceiverService, BrockerReceiverService>()
+                .AddSingleton<IBrockerService, BrockerService>()
                 .AddSingleton<ITokenService, TokenService>()
                 .AddSingleton<IUserRepository, UserRepository>()
                 .AddSingleton<IUserAppService, UserAppService>();
