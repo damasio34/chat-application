@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using ChatApplication.Core.Domain;
+using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Threading.Tasks;
 
 namespace ChatApplication.API.Hubs
@@ -10,9 +12,12 @@ namespace ChatApplication.API.Hubs
             return Groups.AddToGroupAsync(Context.ConnectionId, roomName);
         }
 
-        public Task SendMessage(string roomName, string message)
+        public Task SendMessageToRoom(Message message)
         {
-            return Clients.Groups(roomName).SendAsync(message);
+            message.Id = Guid.NewGuid().ToString();
+            message.When = DateTime.UtcNow;
+
+            return Clients.Groups(message.Room).SendAsync("receiveMessage", message);
         }
     }
 }

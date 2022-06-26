@@ -1,4 +1,5 @@
 using ChatApplication.API.Extensions;
+using ChatApplication.API.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ namespace ChatApplication.API
             services.AddSwaggerDocumentationConfig();
             services.AddIoC();
             services.AddCustomAuthentication(Configuration);
+            services.AddSignalR();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -39,9 +41,10 @@ namespace ChatApplication.API
             app.UseRouting();
 
             app.UseCors(x => x
-                .AllowAnyOrigin()
+                .WithOrigins("http://localhost:4200")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
+                .AllowCredentials()
             );
 
             app.UseAuthentication();
@@ -50,6 +53,7 @@ namespace ChatApplication.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("ws/chat");
             });
         }
     }

@@ -1,13 +1,15 @@
 import { ChatMessageComponent } from './chat-message/chat-message.component';
-import { Component, ComponentFactoryResolver, ElementRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ChatMessage } from './chat-message';
+import { ChatService } from './chat.service';
+import { LoginService } from '../login/login.service';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent {
+export class ChatComponent implements OnInit {
 
   @ViewChild('chatMessages', { read: ViewContainerRef })
   chatMessages!: ViewContainerRef;
@@ -18,11 +20,22 @@ export class ChatComponent {
   @ViewChild(ChatMessageComponent, { read: ViewContainerRef })
   chatMessageComponent!: ChatMessageComponent;
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
+  constructor(private chatService: ChatService, private loginService: LoginService, private componentFactoryResolver: ComponentFactoryResolver) { }
+
+  ngOnInit(): void {
+    this.chatService.startConnection((returnedMessage: ChatMessage) => {
+      if(!!returnedMessage && returnedMessage.username !== this.loginService.getUsername()) {
+        this.createNewMessageCard(returnedMessage);
+        this.scrollToBottom();
+      }
+    });
+  }
 
   public sendMessage(chatMessage: ChatMessage): void {
-    this.createNewMessageCard(chatMessage);
-    this.scrollToBottom();
+    this.chatService.sendMessage(chatMessage, (returnedMessage: ChatMessage) => {
+      this.createNewMessageCard(returnedMessage);
+      this.scrollToBottom();
+    });
   }
 
   private scrollToBottom(): void {
