@@ -32,10 +32,7 @@ export class ChatComponent implements OnInit {
   }
 
   public sendMessage(chatMessage: ChatMessage): void {
-    this.chatService.sendMessage(chatMessage, (returnedMessage: ChatMessage) => {
-      this.createNewMessageCard(returnedMessage);
-      this.scrollToBottom();
-    });
+    this.chatService.sendMessage(chatMessage);
   }
 
   private scrollToBottom(): void {

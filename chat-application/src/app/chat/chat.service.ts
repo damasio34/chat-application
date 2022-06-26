@@ -47,9 +47,8 @@ export class ChatService {
 
   public closeConnection = () => this.hubConnection.stop();
 
-  public sendMessage(chatMessage: ChatMessage, callback: (chatMessage: ChatMessage) => void): void {
+  public sendMessage(chatMessage: ChatMessage): void {
     chatMessage.room = chatMessage.room ?? this.defaultRoom;
-    this.hubConnection.invoke('SendMessageToRoom', chatMessage)
-      .then(() => { callback(chatMessage); });
+    this.hubConnection.invoke('SendMessageToRoom', chatMessage);
   }
 }

@@ -1,0 +1,1 @@
+docker-compose -p chat-application-brocker up -d --no-recreate

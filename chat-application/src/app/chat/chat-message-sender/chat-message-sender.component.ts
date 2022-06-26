@@ -33,7 +33,7 @@ export class ChatMessageSenderComponent implements OnInit {
   private createForm(username: string | null): void {
     this.form = this.fb.group({
       username: [username],
-      text: ['']
+      text: ['/stock=aapl.us']
     });
   }
 
