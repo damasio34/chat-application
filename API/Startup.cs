@@ -41,7 +41,7 @@ namespace ChatApplication.API
             app.UseRouting();
 
             app.UseCors(x => x
-                .WithOrigins("http://localhost:4200")
+                .WithOrigins("http://localhost:4200", "http://localhost:4201/")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()

@@ -30,7 +30,7 @@ namespace ChatApplication.API.Hubs
                 return Groups.AddToGroupAsync(Context.ConnectionId, stockCode);
             }
 
-            return Clients.Groups(message.Room).SendAsync("receiveMessage", message);
+            return Clients.Groups(message.Room)?.SendAsync("receiveMessage", message);
         }
     }
 }
