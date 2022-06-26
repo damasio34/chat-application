@@ -1,0 +1,4 @@
+<div #messages class="messages">
+  <ng-template #chatMessages></ng-template>
+</div>
+<app-chat-message-sender class="message-sender" (onSendMessage)="sendMessage($event)"></app-chat-message-sender>

@@ -1,0 +1,15 @@
+:host-context(body) {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.message-sender {
+  justify-self: flex-end;
+  margin-top: auto;
+}
+
+.messages {
+  margin-bottom: 50px;
+  overflow-y: scroll;
+}
