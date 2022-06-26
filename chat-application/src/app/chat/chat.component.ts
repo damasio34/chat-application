@@ -24,7 +24,7 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.chatService.startConnection((returnedMessage: ChatMessage) => {
-      if(!!returnedMessage && returnedMessage.username !== this.loginService.getUsername()) {
+      if(!!returnedMessage && returnedMessage.username !== this.loginService.username) {
         this.createNewMessageCard(returnedMessage);
         this.scrollToBottom();
       }

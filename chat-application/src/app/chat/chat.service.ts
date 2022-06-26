@@ -1,8 +1,10 @@
+import { LoginService } from 'src/app/login/login.service';
 import { ChatMessage } from './chat-message';
 import { Injectable } from '@angular/core';
 
 import * as signalR from '@microsoft/signalr';
 import { environment } from 'src/environments/environment';
+import { IHttpConnectionOptions } from '@microsoft/signalr';
 
 @Injectable({
   providedIn: 'root'
@@ -12,11 +14,17 @@ export class ChatService {
   private hubConnection!: signalR.HubConnection;
   private defaultRoom: string = 'defaultRoom';
 
-  constructor() { }
+  constructor(private loginService: LoginService) { }
 
   public startConnection = async (onReceiveNewMessage: (chatMessage: ChatMessage) => void) => {
+    const options: IHttpConnectionOptions = {
+      accessTokenFactory: () => {
+        return this.loginService.token;
+      }
+    };
+
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${environment.webSocketUrl}/chat`)
+      .withUrl(`${environment.webSocketUrl}/chat`, options)
       .configureLogging(signalR.LogLevel.Critical)
       .withAutomaticReconnect()
       .build();

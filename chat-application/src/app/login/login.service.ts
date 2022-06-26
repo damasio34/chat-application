@@ -22,8 +22,12 @@ export class LoginService {
     return this.loggedIn.asObservable();
   }
 
-  get token(): string | null {
-    return localStorage.getItem(this.storageKey.token);
+  get token(): string {
+    return localStorage.getItem(this.storageKey.token)!;
+  }
+
+  get username(): string {
+    return localStorage.getItem(this.storageKey.username)!;
   }
 
   private httpOptions = {
@@ -36,11 +40,6 @@ export class LoginService {
     if (localStorage.getItem(this.storageKey.token)) {
       this.loggedIn.next(!!localStorage.getItem(this.storageKey.token));
     }
-  }
-
-  public getUsername(): string | null {
-    const username = localStorage.getItem(this.storageKey.username);
-    return username;
   }
 
   public login(login: Login): void {

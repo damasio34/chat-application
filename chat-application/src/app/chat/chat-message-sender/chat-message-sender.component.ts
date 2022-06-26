@@ -26,7 +26,7 @@ export class ChatMessageSenderComponent implements OnInit {
   @Output() onSendMessage: EventEmitter<ChatMessage> = new EventEmitter<ChatMessage>();
 
   ngOnInit(): void {
-    this.username = this.loginService.getUsername();
+    this.username = this.loginService.username;
     this.createForm(this.username);
   }
 

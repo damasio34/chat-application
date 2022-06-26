@@ -1,10 +1,13 @@
 ﻿using ChatApplication.Core.Domain;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
 
 namespace ChatApplication.API.Hubs
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ChatHub : Hub
     {
         public Task AddToRoom(string roomName)
