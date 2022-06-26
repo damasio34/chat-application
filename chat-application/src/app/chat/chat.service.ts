@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { LoginService } from 'src/app/login/login.service';
 import { ChatMessage } from './chat-message';
 import { Injectable } from '@angular/core';
@@ -14,7 +15,7 @@ export class ChatService {
   private hubConnection!: signalR.HubConnection;
   private defaultRoom: string = 'defaultRoom';
 
-  constructor(private loginService: LoginService) { }
+  constructor(private loginService: LoginService, private router: Router) { }
 
   public startConnection = async (onReceiveNewMessage: (chatMessage: ChatMessage) => void) => {
     const options: IHttpConnectionOptions = {
@@ -42,7 +43,11 @@ export class ChatService {
           onReceiveNewMessage(chatMessage);
         });
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        if(err.toString().includes('401')) {
+          this.router.navigate(['/login']);
+        }
+      });
   }
 
   public closeConnection = () => this.hubConnection.stop();

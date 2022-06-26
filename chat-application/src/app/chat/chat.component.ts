@@ -1,8 +1,7 @@
 import { ChatMessageComponent } from './chat-message/chat-message.component';
-import { Component, ComponentFactoryResolver, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, ComponentRef, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ChatMessage } from './chat-message';
 import { ChatService } from './chat.service';
-import { LoginService } from '../login/login.service';
 
 @Component({
   selector: 'app-chat',
@@ -20,14 +19,23 @@ export class ChatComponent implements OnInit {
   @ViewChild(ChatMessageComponent, { read: ViewContainerRef })
   chatMessageComponent!: ChatMessageComponent;
 
-  constructor(private chatService: ChatService, private loginService: LoginService, private componentFactoryResolver: ComponentFactoryResolver) { }
+  private counterMessage: number = 0;
+  private chatMessageComponents: Array<ComponentRef<ChatMessageComponent>> = [];
+  private _limitOfMessages: number = 10; // ToDo: Get From Environment
+
+  constructor(private chatService: ChatService, private componentFactoryResolver: ComponentFactoryResolver) { }
 
   ngOnInit(): void {
     this.chatService.startConnection((returnedMessage: ChatMessage) => {
-      if(!!returnedMessage && returnedMessage.username !== this.loginService.username) {
-        this.createNewMessageCard(returnedMessage);
-        this.scrollToBottom();
+      var componentId = this.counterMessage++;
+      this.createNewMessageCard(componentId, returnedMessage);
+
+      if (this.chatMessageComponents.length > this._limitOfMessages) {
+        var componentRef = this.chatMessageComponents.shift();
+        componentRef?.destroy();
       }
+
+      this.scrollToBottom();
     });
   }
 
@@ -39,12 +47,15 @@ export class ChatComponent implements OnInit {
     this.messages.nativeElement.scrollTop = this.messages.nativeElement.scrollHeight;
   }
 
-  private createNewMessageCard(chatMessage: ChatMessage) {
+  private createNewMessageCard(componentId: number, chatMessage: ChatMessage) {
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(ChatMessageComponent);
     const componentRef = this.chatMessages.createComponent<ChatMessageComponent>(componentFactory);
-    const compInstance = componentRef.instance;
-    compInstance.username = chatMessage.username;
-    compInstance.text = chatMessage.text;
+    const componentInstance = componentRef.instance;
+    componentInstance.id = componentId;
+    componentInstance.username = chatMessage.username;
+    componentInstance.text = chatMessage.text;
+
+    this.chatMessageComponents.push(componentRef);
   }
 
 }

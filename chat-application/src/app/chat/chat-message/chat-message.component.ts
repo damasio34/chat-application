@@ -8,8 +8,9 @@ import { ChatMessage } from '../chat-message';
 })
 export class ChatMessageComponent implements ChatMessage {
 
-  @Input() username: string = '';
-  @Input() text: string = '';
+  @Input() id!: number;
+  @Input() username!: string;
+  @Input() text!: string;
 
   constructor() { }
 
