@@ -37,24 +37,23 @@ namespace ChatApplication.Api.Test.Hubs
 			// Arrange
 			using var application = new WebApplicationFactory<Startup>();			
 			using var client = application.CreateClient();
-			client.BaseAddress = new Uri("http://localhost:55587/");
 			var server = application.Server;			
 			var payload = new
 			{
-				Username = "batman",
+                Username = "batman",
 				Password = "batman"
 			};
 			var semaphore = new Semaphore(initialCount: 0, maximumCount: 1, name: "WaitReceiveMessage");
 			var connection = await StartConnectionAsync(server.CreateHandler(), "chat");
-			Message message = null;
+			var message = default(Message);
+
+			// Act
 			await connection.InvokeAsync("AddToRoom", "testRoom");
 			connection.On<Message>("receiveMessage", (chatMessage) =>
 			{
 				message = chatMessage;
 				semaphore.Release();
 			});
-
-			// Act
 			await connection.InvokeAsync("SendMessageToRoom", new Message 
 			{
 				Username = "batman",
@@ -67,6 +66,43 @@ namespace ChatApplication.Api.Test.Hubs
 			//Assert
 			message.Text.Should().Be("Hello World!!");
 			message.Username.Should().Be("batman");
+		}
+
+		[Fact]
+		public async Task SendMessage_Should_Send_Message_As_Command()
+		{
+			// Arrange
+			using var application = new WebApplicationFactory<Startup>();
+			using var client = application.CreateClient();
+			var server = application.Server;
+			var payload = new
+			{
+				Username = "robin",
+				Password = "robin"
+			};
+			var semaphore = new Semaphore(initialCount: 0, maximumCount: 1, name: "WaitReceiveMessage");
+			var connection = await StartConnectionAsync(server.CreateHandler(), "chat");
+			var message = default(Message);
+
+			// Act
+			await connection.InvokeAsync("AddToRoom", "testCommandRoom");
+			connection.On<Message>("receiveMessage", (chatMessage) =>
+			{
+				message = chatMessage;
+				semaphore.Release();
+			});
+			await connection.InvokeAsync("SendMessageToRoom", new Message
+			{
+				Username = "robin",
+				Text = "/stock=AAPL.US",
+				Room = "testCommandRoom"
+			});
+
+			semaphore.WaitOne();
+
+			//Assert
+			message.Text.Should().Contain("APPL.US quote is");
+			message.Username.Should().Be("robin");
 		}
 	}
 }
