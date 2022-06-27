@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ChatApplication.Core.Domain
+﻿namespace ChatApplication.Core.Domain
 {
     public class User
     {
@@ -8,6 +6,5 @@ namespace ChatApplication.Core.Domain
         public string Username { get; set; }
         public string Password { get; set; }
         public string Role { get; set; }
-        public ICollection<ChatMessage> Messages { get; set; } = new HashSet<ChatMessage>();
     }
 }
