@@ -3,8 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System;
-using System.IO;
-using System.Reflection;
 
 namespace ChatApplication.API.Extensions
 {
@@ -21,10 +19,7 @@ namespace ChatApplication.API.Extensions
                         Title = "ChatApplication API",
                         Description = "API of ChatApplication"
                     });
-
-                    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                    c.IncludeXmlComments(xmlPath);
+                    
                     c.ExampleFilters();
                     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                     {
@@ -45,7 +40,7 @@ namespace ChatApplication.API.Extensions
                                    Id = "Bearer"
                                 }
                             },
-                            new string[] { }
+                            Array.Empty<string>()
                         }
                     });
                 })

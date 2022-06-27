@@ -41,7 +41,7 @@ namespace ChatApplication.Api.Test.Hubs
 			// Arrange
 			using var application = new WebApplicationFactory<Startup>();			
 			using var client = application.CreateClient();
-			var server = application.Server;			
+			var server = application.Server;
 			var payload = new
 			{
                 Username = "batman",
