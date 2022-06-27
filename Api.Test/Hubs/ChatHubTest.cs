@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -16,7 +17,8 @@ namespace ChatApplication.Api.Test.Hubs
     {
 		private static async Task<HubConnection> StartConnectionAsync(HttpMessageHandler handler, string hubName)
 		{
-			var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImJhdG1hbiIsIm5iZiI6MTY1NjI3NjIyNywiZXhwIjoxNjU2MzYyNjI3LCJpYXQiOjE2NTYyNzYyMjd9.BGudmO9v8PCMFmrJCadSghloCdt-03nYdcCZjmjFz4M";
+			// This token will exipire in 30 days, since 2022-06-26
+			var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImJhdG1hbiIsIm5iZiI6MTY1NjI4ODQxOSwiZXhwIjoxOTE5MDg4NDE5LCJpYXQiOjE2NTYyODg0MTl9.J9YcRTD5r-iAk-v2XNQZsnRRENTBgG2xoO9fKXHI_MQ";
 			var webProxy = new WebProxy(new Uri("http://localhot:4201"));
 			var hubConnection = new HubConnectionBuilder()
 				.WithUrl($"ws://localhost/ws/{hubName}", options => {
@@ -32,6 +34,8 @@ namespace ChatApplication.Api.Test.Hubs
 		}
 
 		[Fact]
+		[Category("Allow_registered_users_to_log_in_and_talk_with_other_users_in_a_chatroom.")]
+
 		public async Task SendMessage_Should_Send_Message_To_All_Clients()
 		{
 			// Arrange
@@ -68,7 +72,8 @@ namespace ChatApplication.Api.Test.Hubs
 			message.Username.Should().Be("batman");
 		}
 
-		[Fact]
+		[Fact(Skip = "Not finished, need open or mock bot")]
+		[Category("Allow_users_to_post_messages_as_commands_into_the_chatroom_with_the_following_format_/stock_=_stock_code")]	
 		public async Task SendMessage_Should_Send_Message_As_Command()
 		{
 			// Arrange

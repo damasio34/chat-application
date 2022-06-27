@@ -25,9 +25,8 @@ namespace StockBot
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var receivedMessage = JsonSerializer.Deserialize<ChatMessage>(message);
-                var stockStream = await StockQuoteService.GetStockQuoteAsync(receivedMessage.MessageCode.Value);
-                var stockQuote = StockQuoteService.GetQuoteFromCSV(stockStream);
+                var receivedMessage = JsonSerializer.Deserialize<ChatMessage>(message);                
+                var stockQuote = await StockService.GetQuoteFromCSV(receivedMessage.MessageCode.Value);
                 var chatMessage = new ChatMessage
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -40,7 +39,7 @@ namespace StockBot
 
                 Console.WriteLine(chatMessage.Text);
 
-                brockerService.SendMessage<ChatMessage>(chatMessage, "bot-to-api");
+                brockerService.SendMessage(chatMessage, "bot-to-api");
             };
         }
     }

@@ -3,6 +3,7 @@ using ChatApplication.Core.Domain.DTOs;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
+using System.ComponentModel;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -14,6 +15,7 @@ namespace ChatApplication.Api.Test
     public class AuthControllerTest
     {
         [Fact]
+        [Category("Allow_registered_users_to_log_in_and_talk_with_other_users_in_a_chatroom.")]        
         public async Task POST_Authenticate_Success()
         {
             // Arrange
@@ -42,6 +44,7 @@ namespace ChatApplication.Api.Test
         }
 
         [Fact]
+        [Category("Allow_registered_users_to_log_in_and_talk_with_other_users_in_a_chatroom.")]        
         public async Task POST_Authenticate_Not_Found()
         {
             // Arrange
