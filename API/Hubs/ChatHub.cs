@@ -1,6 +1,5 @@
 ﻿using ChatApplication.Core.Domain;
 using ChatApplication.Core.Domain.Services;
-using ChatApplication.Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -22,6 +21,11 @@ namespace ChatApplication.API.Hubs
         public Task AddToRoom(string roomName)
         {
             return Groups.AddToGroupAsync(Context.ConnectionId, roomName);
+        }
+
+        public Task RemoveToRoom(string roomName)
+        {
+            return Groups.RemoveFromGroupAsync(Context.ConnectionId, roomName);
         }
 
         public Task SendMessageToRoom(ChatMessage chatMessage)

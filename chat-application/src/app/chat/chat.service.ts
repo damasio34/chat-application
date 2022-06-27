@@ -53,6 +53,12 @@ export class ChatService {
   public closeConnection = () => this.hubConnection.stop();
 
   public sendMessage(chatMessage: ChatMessage): void {
+    if(chatMessage.room !== this.defaultRoom) {
+      this.hubConnection.invoke('RemoveToRoom', this.defaultRoom);
+      this.hubConnection.invoke('AddToRoom', chatMessage.room);
+      this.defaultRoom = chatMessage.room;
+    }
+
     chatMessage.room = chatMessage.room ?? this.defaultRoom;
     this.hubConnection.invoke('SendMessageToRoom', chatMessage);
   }

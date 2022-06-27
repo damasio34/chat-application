@@ -2,6 +2,9 @@
   <mat-card-content>
     <form [formGroup]="form" (ngSubmit)="sendMessage()">
       <mat-form-field appearance="outline">
+        <input type="text" matInput formControlName="room" placeholder="input a message">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
         <input type="text" matInput formControlName="text" placeholder="input a message" #textinput autofocus>
       </mat-form-field>
       <button type="submit" mat-raised-button class="btn__submit" color="primary">Send</button>

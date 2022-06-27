@@ -19,16 +19,14 @@ export class ChatComponent implements OnInit {
   @ViewChild(ChatMessageComponent, { read: ViewContainerRef })
   chatMessageComponent!: ChatMessageComponent;
 
-  private counterMessage: number = 0;
   private chatMessageComponents: Array<ComponentRef<ChatMessageComponent>> = [];
-  private _limitOfMessages: number = 10; // ToDo: Get From Environment
+  private _limitOfMessages: number = 50; // ToDo: Get From Environment
 
   constructor(private chatService: ChatService, private componentFactoryResolver: ComponentFactoryResolver) { }
 
   ngOnInit(): void {
     this.chatService.startConnection((returnedMessage: ChatMessage) => {
-      var componentId = this.counterMessage++;
-      this.createNewMessageCard(componentId, returnedMessage);
+      this.createNewMessageCard(returnedMessage);
 
       if (this.chatMessageComponents.length > this._limitOfMessages) {
         var componentRef = this.chatMessageComponents.shift();
@@ -47,13 +45,13 @@ export class ChatComponent implements OnInit {
     this.messages.nativeElement.scrollTop = this.messages.nativeElement.scrollHeight;
   }
 
-  private createNewMessageCard(componentId: number, chatMessage: ChatMessage) {
+  private createNewMessageCard(chatMessage: ChatMessage) {
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(ChatMessageComponent);
     const componentRef = this.chatMessages.createComponent<ChatMessageComponent>(componentFactory);
     const componentInstance = componentRef.instance;
-    componentInstance.id = componentId;
     componentInstance.username = chatMessage.username;
     componentInstance.text = chatMessage.text;
+    componentInstance.room = chatMessage.room;
 
     this.chatMessageComponents.push(componentRef);
   }

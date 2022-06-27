@@ -11,6 +11,7 @@ export class ChatMessageComponent implements ChatMessage {
   @Input() id!: number;
   @Input() username!: string;
   @Input() text!: string;
+  @Input() room!: string;
 
   constructor() { }
 

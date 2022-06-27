@@ -15,6 +15,7 @@ export class ChatMessageSenderComponent implements OnInit {
 
   form: FormGroup = new FormGroup({
     username: new FormControl(''),
+    room: new FormControl('defaultRoom'),
     text: new FormControl(''),
   });
 
@@ -30,10 +31,11 @@ export class ChatMessageSenderComponent implements OnInit {
     this.createForm(this.username);
   }
 
-  private createForm(username: string | null): void {
+  private createForm(username: string | null, defaultRoom?: string): void {
     this.form = this.fb.group({
       username: [username],
-      text: ['/stock=aapl.us']
+      room: [defaultRoom ?? 'defaultRoom'],
+      text: ['']
     });
   }
 
@@ -43,7 +45,7 @@ export class ChatMessageSenderComponent implements OnInit {
 
       this.onSendMessage.emit(message);
       this.form.reset();
-      this.createForm(this.username);
+      this.createForm(this.username, message.room);
       this.textinput.nativeElement.focus();
   }
 
